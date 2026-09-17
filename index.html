@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>کلیستنیکس خانگی — ۴ روز در هفته</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#222222">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f2f2f2;color:#222;font-family:Arial,sans-serif}
+.app{max-width:760px;margin:auto;padding:12px}.top{background:#fff;border-radius:16px;padding:14px;position:sticky;top:0;z-index:4;box-shadow:0 2px 9px #0001}
+h1{text-align:center;font-size:22px;margin:3px}.sub{text-align:center;color:#666;font-size:13px}
+.progress{height:11px;background:#ddd;border-radius:8px;margin:10px 0 5px;overflow:hidden}.bar{height:100%;width:0;background:#333}
+.status{text-align:center;font-size:12px;color:#666}
+.info{background:#fff;border-radius:15px;margin:12px 0;padding:14px;font-size:13px;line-height:1.9}
+.info h3{margin:10px 0 6px;font-size:15px}.info h3:first-child{margin-top:0}
+.sched{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+.sched td{border:1px solid #e5e5e5;padding:6px 4px;text-align:center}
+.sched td.tr{background:#eef4ee;color:#3a7d44;font-weight:bold}
+.sched td.rs{background:#f7f7f7;color:#999}
+.day{background:#fff;border-radius:15px;margin:12px 0;padding:12px}
+.day h2{font-size:18px;margin:0 0 10px}.ex{border:1px solid #e3e3e3;border-radius:12px;padding:10px;margin:8px 0}
+.head{display:flex;align-items:center;gap:8px}.head input{width:21px;height:21px}.name{font-weight:bold}
+.eq{display:inline-block;font-size:10px;background:#eef4ee;color:#3a7d44;border-radius:6px;padding:1px 6px;margin-right:6px;vertical-align:middle}
+.target{font-size:12px;color:#777;margin:5px 0 8px}.sets{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.set{background:#f7f7f7;border-radius:9px;padding:6px}.set b{display:block;font-size:11px;margin-bottom:4px;text-align:center;color:#666}
+select{width:100%;padding:7px;border:1px solid #ddd;border-radius:7px;background:#fff;font-size:13px}
+.done{opacity:.58}.done .name{text-decoration:line-through}
+button{border:0;border-radius:10px;padding:11px;width:100%;background:#222;color:white;font-size:15px;margin:7px 0}.secondary{background:#666}
+.day-rate{background:#3a7d44}
+.day-badge{display:inline-block;font-size:11px;background:#eee;color:#555;border-radius:8px;padding:3px 8px;margin-right:6px}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center;padding:16px}.box{background:#fff;border-radius:18px;padding:18px;width:100%;max-width:430px;text-align:center}
+.rating{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.rating button{background:#eee;color:#222;margin:0}.rating button.sel{background:#222;color:#fff}
+.msg{background:#f3f3f3;border-radius:10px;padding:9px;margin:10px 0;font-size:13px}
+details summary{cursor:pointer;font-weight:bold;font-size:14px;padding:4px 0}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="top"><h1>کلیستنیکس خانگی</h1><div class="sub">۴ روز تمرین در هفته • وزن بدن + کش + بارفیکس</div>
+<div class="progress"><div class="bar" id="bar"></div></div><div class="status" id="status"></div></div>
+
+<div class="info">
+<h3>برنامه هفتگی</h3>
+<table class="sched">
+<tr><td>شنبه</td><td>یکشنبه</td><td>دوشنبه</td><td>سه‌شنبه</td><td>چهارشنبه</td><td>پنجشنبه</td><td>جمعه</td></tr>
+<tr><td class="tr">Push</td><td class="rs">استراحت</td><td class="tr">Pull</td><td class="rs">استراحت</td><td class="tr">Legs+Core</td><td class="rs">استراحت</td><td class="tr">Full Body+Skill</td></tr>
+</table>
+
+<h3>روزهای استراحت رو چیکار کنم؟</h3>
+استراحت یعنی توقف کامل تمرین سنگین، نه بی‌حرکتی مطلق:
+<br>• یه پیاده‌روی سبک ۲۰-۳۰ دقیقه‌ای یا کشش/استرچینگ ملایم کافیه.
+<br>• اگه دلت خواست، فقط تمرین مهارت سبک (مثل تعادل روی دست کنار دیوار چند دقیقه) بدون خستگی عضلانی مشکلی نداره.
+<br>• خواب ۸ تا ۹ ساعته همین روزها مهم‌ترین بخش ریکاوریه — بدن تو این سن هم داره رشد می‌کنه هم عضله می‌سازه.
+<br>• درد عضلانی خفیف (کوفتگی) طبیعیه؛ ولی درد تیز مفصلی رو نادیده نگیر و استراحت رو طولانی‌تر کن.
+
+<h3>تغذیه (با توجه به سن ۱۶، قد ۱۷۷، وزن ۶۷ کیلوگرم)</h3>
+• <b>پروتئین</b>: روزی حدود ۹۰ تا ۱۱۰ گرم (تقریباً ۱.۴-۱.۶ گرم به‌ازای هر کیلو وزن بدن) از تخم‌مرغ، مرغ، ماست، حبوبات، شیر و گوشت قرمز کم‌چرب.
+<br>• <b>کالری کافی</b>: چون هنوز در سن رشدی، نباید کم‌خوری کنی؛ ۳ وعده اصلی + ۲ میان‌وعده (مثل میوه، آجیل، ماست) بهتر از ۲ وعده سنگینه.
+<br>• <b>لبنیات</b>: شیر و لبنیات کافی برای کلسیم و ادامه رشد قدی مهمه.
+<br>• <b>آب</b>: حداقل ۲-۲.۵ لیتر در روز، بیشتر در روزهای تمرین.
+<br>• <b>قبل تمرین</b> (۱-۲ ساعت قبل): یه وعده سبک کربوهیدرات+پروتئین مثل نان‌وپنیر یا موز و شیر.
+<br>• <b>بعد تمرین</b> (تا ۱ ساعت بعد): پروتئین+کربوهیدرات، مثل تخم‌مرغ و نان، یا شیر و میوه، برای ریکاوری عضله.
+<br>• از غذای فرآوری‌شده و نوشابه‌های شیرین تا حد امکان دوری کن، ولی نیازی به رژیم سخت‌گیرانه نیست — تعادل مهم‌تر از حذف کامله.
+</div>
+
+<div id="days"></div>
+<button class="secondary" onclick="resetAll()">ریست کامل</button>
+</div>
+<div class="modal" id="modal"><div class="box">
+<h3>سختی این روز چطور بود؟</h3><p>از ۱ تا ۱۰ انتخاب کن:</p>
+<div class="rating" id="rating"></div><div class="msg" id="msg">انتخاب کن.</div>
+<button onclick="saveRating()">ثبت و تنظیم برنامه این روز</button><button class="secondary" onclick="closeModal()">لغو</button>
+</div></div>
+
+<script>
+// x = [name, sets, repLow, repHigh, equipment]
+const days=[
+["شنبه — Push / سینه + سرشانه",[
+ ["Push-up",3,8,15,"وزن بدن"],
+ ["Diamond Push-up",3,6,10,"وزن بدن"],
+ ["Band Chest Press",3,12,15,"کش"],
+ ["Band Overhead Press",3,10,15,"کش"],
+ ["Band Lateral Raise",3,12,15,"کش"]
+]],
+["دوشنبه — Pull / پشت + بارفیکس",[
+ ["Dead Hang",3,20,40,"بارفیکس"],
+ ["Scapular Pull-up",3,8,12,"بارفیکس"],
+ ["Negative Pull-up",4,3,5,"بارفیکس"],
+ ["Band Assisted Pull-up",3,5,8,"بارفیکس+کمک"],
+ ["Band Standing Row",3,12,15,"کش"],
+ ["Band Face Pull",3,12,15,"کش"],
+ ["Band Bicep Curl",2,10,15,"کش"]
+]],
+["چهارشنبه — Legs + Core",[
+ ["Bodyweight Squat",3,15,20,"وزن بدن"],
+ ["Bulgarian Split Squat",3,8,12,"وزن بدن"],
+ ["Band Squat",3,12,15,"کش"],
+ ["Band Standing Leg Curl",3,12,15,"کش"],
+ ["Glute Bridge",3,15,20,"وزن بدن"],
+ ["Calf Raise",3,15,20,"وزن بدن"],
+ ["Hanging Knee Raise",3,8,15,"بارفیکس"],
+ ["Plank",3,30,60,"وزن بدن"]
+]],
+["جمعه — Full Body + Skill",[
+ ["Wall Handstand Hold",4,15,30,"دیوار"],
+ ["Pike Push-up",3,6,10,"وزن بدن"],
+ ["L-sit Progression",4,10,20,"وزن بدن"],
+ ["Band Kneeling Crunch",3,12,15,"کش"],
+ ["Band Triceps Extension",3,12,15,"کش"],
+ ["Plank",3,30,60,"وزن بدن"]
+]]
+];
+const bandLevels=["بدون کش","سبک","متوسط","سنگین","سنگین×۲"];
+let adj=JSON.parse(localStorage.getItem("adj4")||"{}");
+let bandLvl=JSON.parse(localStorage.getItem("bandLvl4")||"{}");
+let setAdj=JSON.parse(localStorage.getItem("setAdj4")||"{}");
+let openDay=null;
+const numOpts=(min,max,step=1)=>{let a=[];for(let i=min;i<=max;i+=step)a.push(i);return a};
+function options(vals,selected){return vals.map(v=>`<option ${String(v)===String(selected)?"selected":""}>${v}</option>`).join("")}
+function render(){
+ const root=document.getElementById("days");root.innerHTML="";
+ days.forEach((d,di)=>{
+  let sec=document.createElement("section");sec.className="day";
+  let lastR=localStorage.getItem("lastRating4"+di);
+  sec.innerHTML=`<h2>${d[0]} ${lastR?`<span class="day-badge">آخرین سختی: ${lastR}/10</span>`:""}</h2>`;
+  d[1].forEach((x,ei)=>{
+   let key=di+"-"+ei,s=JSON.parse(localStorage.getItem("ex4"+key)||"{}"), delta=adj[key]||0;
+   let lo=Math.max(1,x[2]+delta),hi=Math.max(lo,x[3]+delta), done=s.done;
+   let sets=x[1]+(setAdj[key]||0);
+   let assisted=x[4].indexOf("کمک")>-1;
+   let usesBand=(x[4].indexOf("کش")>-1)&&!assisted;
+   let sugBand=bandLevels[bandLvl[key]||0];
+   let div=document.createElement("div");div.className="ex"+(done?" done":"");
+   let isTime=/Hold|Hang|Plank|L-sit/.test(x[0]), unit=isTime?"ثانیه":"تکرار";
+   div.innerHTML=`<div class="head"><input type="checkbox" ${done?"checked":""}><span class="name">${x[0]}</span></div>
+   <div class="eq">${x[4].replace("+کمک","")+(assisted?" (کمکی)":"")}</div>${usesBand?`<span class="eq" style="background:#eef2fb;color:#2b5fa8">پیشنهاد کش: ${sugBand}</span>`:""}
+   <div class="target">هدف: ${sets} ست × ${lo}–${hi} ${unit} • استراحت: 60–90 ثانیه</div>
+   ${assisted?`<div style="font-size:11px;color:#a07a2b;margin-top:4px">هرچه قوی‌تر شدی از کش نازک‌تر (کمک کمتر) استفاده کن.</div>`:""}
+   <div class="sets">${Array.from({length:sets},(_,i)=>`<div class="set"><b>ست ${i+1}</b><select class="band">${options(bandLevels,s["b"+i]??(usesBand?sugBand:"بدون کش"))}</select><select class="rep">${options(numOpts(lo,hi),s["r"+i]??"")}</select></div>`).join("")}</div>`;
+   let cb=div.querySelector("input"), bs=div.querySelectorAll(".band"),rs=div.querySelectorAll(".rep");
+   cb.onchange=()=>{s.done=cb.checked;localStorage.setItem("ex4"+key,JSON.stringify(s));div.classList.toggle("done",cb.checked);update()};
+   bs.forEach((z,i)=>z.onchange=()=>{s["b"+i]=z.value;localStorage.setItem("ex4"+key,JSON.stringify(s))});
+   rs.forEach((z,i)=>z.onchange=()=>{s["r"+i]=z.value;localStorage.setItem("ex4"+key,JSON.stringify(s))});
+   sec.appendChild(div);
+  });
+  let rateBtn=document.createElement("button");
+  rateBtn.className="day-rate";
+  rateBtn.textContent="پایان "+d[0].split("—")[0].trim()+" و ثبت سختی";
+  rateBtn.onclick=()=>openRating(di);
+  sec.appendChild(rateBtn);
+  root.appendChild(sec);
+ });update();
+}
+function update(){let b=[...document.querySelectorAll('input[type=checkbox]')],d=b.filter(x=>x.checked).length;document.getElementById("status").textContent=`${d} از ${b.length} حرکت انجام شده`;document.getElementById("bar").style.width=(b.length?(d/b.length*100):0)+"%"}
+function openRating(di){
+ openDay=di;window.rate=null;
+ let r=document.getElementById("rating");r.innerHTML="";
+ for(let i=1;i<=10;i++){let b=document.createElement("button");b.textContent=i;
+  b.onclick=()=>{window.rate=i;document.querySelectorAll(".rating button").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");
+   document.getElementById("msg").textContent=i<=3?"خیلی آسان → جهش بزرگ به جلو":i<=6?"مناسب → پیشرفت تدریجی و ثابت":i<=8?"سخت ولی انجام‌شدنی → تثبیت، بدون افزایش":"خیلی سخت → کمی عقب‌نشینی برای حفظ فرم"};
+  r.appendChild(b)}
+ document.getElementById("msg").textContent="انتخاب کن.";
+ document.getElementById("modal").style.display="flex";
+}
+function saveRating(){
+ if(!window.rate||openDay===null)return;
+ let di=openDay, r=window.rate;
+ let step = r<=3?2 : r<=6?1 : r<=8?0 : -1;
+ let upgraded=[];
+ days[di][1].forEach((x,ei)=>{
+  let k=di+"-"+ei, assisted=x[4].indexOf("کمک")>-1, usesBand=(x[4].indexOf("کش")>-1)&&!assisted;
+  if(step>0){
+   adj[k]=(adj[k]||0)+step;
+   if(usesBand){
+    while(adj[k]>=4 && (bandLvl[k]||0) < bandLevels.length-1){
+     adj[k]-=4; bandLvl[k]=(bandLvl[k]||0)+1; upgraded.push(x[0]+" → کش "+bandLevels[bandLvl[k]]);
+    }
+    if((bandLvl[k]||0)>=bandLevels.length-1) adj[k]=Math.min(adj[k],3);
+   } else {
+    while(adj[k]>=6){
+     adj[k]-=6; setAdj[k]=(setAdj[k]||0)+1; upgraded.push(x[0]+" → یک ست اضافه شد");
+    }
+   }
+  } else if(step<0){
+   adj[k]=Math.max(-3,(adj[k]||0)+step);
+  }
+ });
+ localStorage.setItem("adj4",JSON.stringify(adj));
+ localStorage.setItem("bandLvl4",JSON.stringify(bandLvl));
+ localStorage.setItem("setAdj4",JSON.stringify(setAdj));
+ localStorage.setItem("lastRating4"+di,r);
+ closeModal();render();
+ alert(upgraded.length? "سختی ثبت شد. این حرکت‌ها ارتقا پیدا کردن:\n"+upgraded.join("\n") : "سختی این روز ثبت شد و هدف‌های همون روز به‌صورت خودکار تنظیم شد.");
+}
+function closeModal(){document.getElementById("modal").style.display="none";openDay=null}
+function resetAll(){if(!confirm("همه اطلاعات پاک شود؟"))return;localStorage.clear();adj={};bandLvl={};setAdj={};render()}
+render();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js").catch(()=>{}))}
+</script>
+</body>
+</html>
