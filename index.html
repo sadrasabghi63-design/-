@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>کلیستنیکس خانگی — ۴ روز در هفته</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#222222">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f2f2f2;color:#222;font-family:Arial,sans-serif}
+.app{max-width:760px;margin:auto;padding:12px}.top{background:#fff;border-radius:16px;padding:14px;position:sticky;top:0;z-index:4;box-shadow:0 2px 9px #0001}
+h1{text-align:center;font-size:22px;margin:3px}.sub{text-align:center;color:#666;font-size:13px}
+.progress{height:11px;background:#ddd;border-radius:8px;margin:10px 0 5px;overflow:hidden}.bar{height:100%;width:0;background:#333}
+.status{text-align:center;font-size:12px;color:#666}
+.info{background:#fff;border-radius:15px;margin:12px 0;padding:14px;font-size:13px;line-height:1.9}
+.info h3{margin:10px 0 6px;font-size:15px}.info h3:first-child{margin-top:0}
+.sched{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+.sched td{border:1px solid #e5e5e5;padding:6px 4px;text-align:center}
+.sched td.tr{background:#eef4ee;color:#3a7d44;font-weight:bold}
+.sched td.rs{background:#f7f7f7;color:#999}
+.day{background:#fff;border-radius:15px;margin:12px 0;padding:12px}
+.day h2{font-size:18px;margin:0 0 10px}.ex{border:1px solid #e3e3e3;border-radius:12px;padding:10px;margin:8px 0}
+.head{display:flex;align-items:center;gap:8px}.head input{width:21px;height:21px}.name{font-weight:bold}
+.eq{display:inline-block;font-size:10px;background:#eef4ee;color:#3a7d44;border-radius:6px;padding:1px 6px;margin-right:6px;vertical-align:middle}
+.target{font-size:12px;color:#777;margin:5px 0 8px}.sets{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.set{background:#f7f7f7;border-radius:9px;padding:6px}.set b{display:block;font-size:11px;margin-bottom:4px;text-align:center;color:#666}
+select{width:100%;padding:7px;border:1px solid #ddd;border-radius:7px;background:#fff;font-size:13px}
+.done{opacity:.58}.done .name{text-decoration:line-through}
+button{border:0;border-radius:10px;padding:11px;width:100%;background:#222;color:white;font-size:15px;margin:7px 0}.secondary{background:#666}
+.day-rate{background:#3a7d44}
+.day-badge{display:inline-block;font-size:11px;background:#eee;color:#555;border-radius:8px;padding:3px 8px;margin-right:6px}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center;padding:16px}.box{background:#fff;border-radius:18px;padding:18px;width:100%;max-width:430px;text-align:center}
+.rating{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.rating button{background:#eee;color:#222;margin:0}.rating button.sel{background:#222;color:#fff}
+.msg{background:#f3f3f3;border-radius:10px;padding:9px;margin:10px 0;font-size:13px}
+
+details summary{cursor:pointer;font-weight:bold;font-size:14px;padding:4px 0}
+.menu-wrap{position:relative;display:flex;justify-content:flex-end;margin-bottom:6px}
+.menu-btn{width:44px;height:40px;padding:0;margin:0;font-size:25px;line-height:1;background:#f0f0f0;color:#222}
+.menu-pop{display:none;position:absolute;top:44px;left:0;min-width:170px;background:#fff;border:1px solid #ddd;border-radius:12px;padding:7px;box-shadow:0 5px 18px #0002;z-index:8}
+.menu-pop.show{display:block}.menu-pop button{margin:3px 0;text-align:right;background:#f5f5f5;color:#222}
+.history-panel{display:none;background:#fff;border-radius:15px;margin:12px 0;padding:14px}
+.history-panel.show{display:block}.history-item{border:1px solid #e3e3e3;border-radius:10px;padding:10px;margin:8px 0;font-size:13px;line-height:1.8}
+.history-item h4{margin:0 0 5px}.history-stat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}
+.history-stat div{background:#f5f5f5;border-radius:9px;padding:10px;text-align:center;font-size:12px}
+.history-stat strong{display:block;font-size:18px}
+.chart-wrap{width:100%;overflow-x:auto}.trend-chart{width:100%;min-width:280px;height:150px;border:1px solid #eee;border-radius:10px}
+.cloud-panel{background:#f6f8ff;border:1px solid #dce4ff;border-radius:12px;padding:10px;margin:10px 0;font-size:13px;line-height:1.8}
+.cloud-actions{display:flex;gap:7px;flex-wrap:wrap}.cloud-actions button{flex:1;min-width:130px;margin:3px 0}
+.cloud-status{font-size:12px;color:#555;margin-top:6px;overflow-wrap:anywhere}
+.cloud-user{font-size:12px;color:#555;margin:4px 0}
+
+</style>
+</head>
+<body>
+<div class="app">
+<div class="top">
+<div class="menu-wrap"><button class="menu-btn" aria-label="منو" onclick="toggleMenu()">⋮</button>
+<div class="menu-pop" id="menuPop"><button onclick="showHistory()">تاریخچه و روند پیشرفت</button><button onclick="exportHistory()">خروجی گرفتن از اطلاعات</button><button onclick="hideMenu()">بستن منو</button></div></div>
+<h1>کلیستنیکس خانگی</h1><div class="sub">۴ روز تمرین در هفته • وزن بدن + کش + بارفیکس</div>
+<div class="cloud-panel">
+  <strong>ذخیره آنلاین و همگام‌سازی</strong>
+  <div class="cloud-user" id="cloudUser">برای ذخیره آنلاین، ابتدا Firebase را راه‌اندازی کن.</div>
+  <div class="cloud-actions">
+    <button id="googleSignInBtn" onclick="cloudSignIn()">ورود با حساب گوگل</button>
+    <button id="googleSignOutBtn" class="secondary" onclick="cloudSignOut()" style="display:none">خروج از حساب</button>
+  </div>
+  <div class="cloud-status" id="cloudStatus">وضعیت: هنوز پیکربندی نشده است.</div>
+</div>
+<div class="progress"><div class="bar" id="bar"></div></div><div class="status" id="status"></div></div>
+
+<div class="info">
+<h3>برنامه هفتگی</h3>
+<table class="sched">
+<tr><td>شنبه</td><td>یکشنبه</td><td>دوشنبه</td><td>سه‌شنبه</td><td>چهارشنبه</td><td>پنجشنبه</td><td>جمعه</td></tr>
+<tr><td class="tr">Push</td><td class="rs">استراحت</td><td class="tr">Pull</td><td class="rs">استراحت</td><td class="tr">Legs+Core</td><td class="rs">استراحت</td><td class="tr">Full Body+Skill</td></tr>
+</table>
+
+<h3>روزهای استراحت رو چیکار کنم؟</h3>
+استراحت یعنی توقف کامل تمرین سنگین، نه بی‌حرکتی مطلق:
+<br>• یه پیاده‌روی سبک ۲۰-۳۰ دقیقه‌ای یا کشش/استرچینگ ملایم کافیه.
+<br>• اگه دلت خواست، فقط تمرین مهارت سبک (مثل تعادل روی دست کنار دیوار چند دقیقه) بدون خستگی عضلانی مشکلی نداره.
+<br>• خواب ۸ تا ۹ ساعته همین روزها مهم‌ترین بخش ریکاوریه — بدن تو این سن هم داره رشد می‌کنه هم عضله می‌سازه.
+<br>• درد عضلانی خفیف (کوفتگی) طبیعیه؛ ولی درد تیز مفصلی رو نادیده نگیر و استراحت رو طولانی‌تر کن.
+
+<h3>تغذیه (با توجه به سن ۱۶، قد ۱۷۷، وزن ۶۷ کیلوگرم)</h3>
+• <b>پروتئین</b>: روزی حدود ۹۰ تا ۱۱۰ گرم (تقریباً ۱.۴-۱.۶ گرم به‌ازای هر کیلو وزن بدن) از تخم‌مرغ، مرغ، ماست، حبوبات، شیر و گوشت قرمز کم‌چرب.
+<br>• <b>کالری کافی</b>: چون هنوز در سن رشدی، نباید کم‌خوری کنی؛ ۳ وعده اصلی + ۲ میان‌وعده (مثل میوه، آجیل، ماست) بهتر از ۲ وعده سنگینه.
+<br>• <b>لبنیات</b>: شیر و لبنیات کافی برای کلسیم و ادامه رشد قدی مهمه.
+<br>• <b>آب</b>: حداقل ۲-۲.۵ لیتر در روز، بیشتر در روزهای تمرین.
+<br>• <b>قبل تمرین</b> (۱-۲ ساعت قبل): یه وعده سبک کربوهیدرات+پروتئین مثل نان‌وپنیر یا موز و شیر.
+<br>• <b>بعد تمرین</b> (تا ۱ ساعت بعد): پروتئین+کربوهیدرات، مثل تخم‌مرغ و نان، یا شیر و میوه، برای ریکاوری عضله.
+<br>• از غذای فرآوری‌شده و نوشابه‌های شیرین تا حد امکان دوری کن، ولی نیازی به رژیم سخت‌گیرانه نیست — تعادل مهم‌تر از حذف کامله.
+</div>
+
+<section class="history-panel" id="historyPanel">
+<h2>تاریخچه تمرین و روند پیشرفت</h2>
+<p class="sub">اطلاعات هر بار ثبت تمرین با تاریخ و ساعت ذخیره می‌شود.</p>
+<div class="history-stat" id="historyStats"></div>
+<h3>نمودار روند نمره تمرین</h3><div class="chart-wrap"><canvas class="trend-chart" id="trendChart" width="600" height="300"></canvas></div>
+<div id="historyList"></div>
+<button class="secondary" onclick="hideHistory()">بازگشت به برنامه</button>
+<button class="secondary" onclick="clearHistory()">پاک کردن فقط تاریخچه</button>
+</section>
+<div id="days"></div>
+<button class="secondary" onclick="resetAll()">ریست کامل</button>
+</div>
+<div class="modal" id="modal"><div class="box">
+<h3>سختی این روز چطور بود؟</h3><p>از ۱ تا ۱۰ انتخاب کن:</p>
+<div class="rating" id="rating"></div><div class="msg" id="msg">انتخاب کن.</div>
+<button onclick="saveRating()">ثبت و تنظیم برنامه این روز</button><button class="secondary" onclick="closeModal()">لغو</button>
+</div></div>
+
+<script>
+// x = [name, sets, repLow, repHigh, equipment]
+const days=[
+["شنبه — Push / سینه + سرشانه",[
+ ["Push-up",3,8,15,"وزن بدن"],
+ ["Diamond Push-up",3,6,10,"وزن بدن"],
+ ["Band Chest Press",3,12,15,"کش"],
+ ["Band Overhead Press",3,10,15,"کش"],
+ ["Band Lateral Raise",3,12,15,"کش"]
+]],
+["دوشنبه — Pull / پشت + بارفیکس",[
+ ["Dead Hang",3,20,40,"بارفیکس"],
+ ["Scapular Pull-up",3,8,12,"بارفیکس"],
+ ["Negative Pull-up",4,3,5,"بارفیکس"],
+ ["Band Assisted Pull-up",3,5,8,"بارفیکس+کمک"],
+ ["Band Standing Row",3,12,15,"کش"],
+ ["Band Face Pull",3,12,15,"کش"],
+ ["Band Bicep Curl",2,10,15,"کش"]
+]],
+["چهارشنبه — Legs + Core",[
+ ["Bodyweight Squat",3,15,20,"وزن بدن"],
+ ["Bulgarian Split Squat",3,8,12,"وزن بدن"],
+ ["Band Squat",3,12,15,"کش"],
+ ["Band Standing Leg Curl",3,12,15,"کش"],
+ ["Glute Bridge",3,15,20,"وزن بدن"],
+ ["Calf Raise",3,15,20,"وزن بدن"],
+ ["Hanging Knee Raise",3,8,15,"بارفیکس"],
+ ["Plank",3,30,60,"وزن بدن"]
+]],
+["جمعه — Full Body + Skill",[
+ ["Wall Handstand Hold",4,15,30,"دیوار"],
+ ["Pike Push-up",3,6,10,"وزن بدن"],
+ ["L-sit Progression",4,10,20,"وزن بدن"],
+ ["Band Kneeling Crunch",3,12,15,"کش"],
+ ["Band Triceps Extension",3,12,15,"کش"],
+ ["Plank",3,30,60,"وزن بدن"]
+]]
+];
+const bandLevels=["بدون کش","سبک","متوسط","سنگین","سنگین×۲"];
+let adj=JSON.parse(localStorage.getItem("adj4")||"{}");
+let bandLvl=JSON.parse(localStorage.getItem("bandLvl4")||"{}");
+let setAdj=JSON.parse(localStorage.getItem("setAdj4")||"{}");
+let openDay=null;
+const numOpts=(min,max,step=1)=>{let a=[];for(let i=min;i<=max;i+=step)a.push(i);return a};
+function options(vals,selected){return vals.map(v=>`<option ${String(v)===String(selected)?"selected":""}>${v}</option>`).join("")}
+function render(){
+ const root=document.getElementById("days");root.innerHTML="";
+ days.forEach((d,di)=>{
+  let sec=document.createElement("section");sec.className="day";
+  let lastR=localStorage.getItem("lastRating4"+di);
+  sec.innerHTML=`<h2>${d[0]} ${lastR?`<span class="day-badge">آخرین سختی: ${lastR}/10</span>`:""}</h2>`;
+  d[1].forEach((x,ei)=>{
+   let key=di+"-"+ei,s=JSON.parse(localStorage.getItem("ex4"+key)||"{}"), delta=adj[key]||0;
+   let lo=Math.max(1,x[2]+delta),hi=Math.max(lo,x[3]+delta), done=s.done;
+   let sets=x[1]+(setAdj[key]||0);
+   let assisted=x[4].indexOf("کمک")>-1;
+   let usesBand=(x[4].indexOf("کش")>-1)&&!assisted;
+   let sugBand=bandLevels[bandLvl[key]||0];
+   let div=document.createElement("div");div.className="ex"+(done?" done":"");
+   let isTime=/Hold|Hang|Plank|L-sit/.test(x[0]), unit=isTime?"ثانیه":"تکرار";
+   div.innerHTML=`<div class="head"><input type="checkbox" ${done?"checked":""}><span class="name">${x[0]}</span></div>
+   <div class="eq">${x[4].replace("+کمک","")+(assisted?" (کمکی)":"")}</div>${usesBand?`<span class="eq" style="background:#eef2fb;color:#2b5fa8">پیشنهاد کش: ${sugBand}</span>`:""}
+   <div class="target">هدف: ${sets} ست × ${lo}–${hi} ${unit} • استراحت: 60–90 ثانیه</div>
+   ${assisted?`<div style="font-size:11px;color:#a07a2b;margin-top:4px">هرچه قوی‌تر شدی از کش نازک‌تر (کمک کمتر) استفاده کن.</div>`:""}
+   <div class="sets">${Array.from({length:sets},(_,i)=>`<div class="set"><b>ست ${i+1}</b><select class="band">${options(bandLevels,s["b"+i]??(usesBand?sugBand:"بدون کش"))}</select><select class="rep">${options(numOpts(lo,hi),s["r"+i]??"")}</select></div>`).join("")}</div>`;
+   let cb=div.querySelector("input"), bs=div.querySelectorAll(".band"),rs=div.querySelectorAll(".rep");
+   cb.onchange=()=>{s.done=cb.checked;localStorage.setItem("ex4"+key,JSON.stringify(s));div.classList.toggle("done",cb.checked);update();saveWorkoutSnapshot("تغییر وضعیت حرکت")};
+   bs.forEach((z,i)=>z.onchange=()=>{s["b"+i]=z.value;localStorage.setItem("ex4"+key,JSON.stringify(s));saveWorkoutSnapshot("ثبت سطح کش")});
+   rs.forEach((z,i)=>z.onchange=()=>{s["r"+i]=z.value;localStorage.setItem("ex4"+key,JSON.stringify(s));saveWorkoutSnapshot("ثبت تکرار/زمان")});
+   sec.appendChild(div);
+  });
+  let rateBtn=document.createElement("button");
+  rateBtn.className="day-rate";
+  rateBtn.textContent="پایان "+d[0].split("—")[0].trim()+" و ثبت سختی";
+  rateBtn.onclick=()=>openRating(di);
+  sec.appendChild(rateBtn);
+  root.appendChild(sec);
+ });update();
+}
+function update(){let b=[...document.querySelectorAll('input[type=checkbox]')],d=b.filter(x=>x.checked).length;document.getElementById("status").textContent=`${d} از ${b.length} حرکت انجام شده`;document.getElementById("bar").style.width=(b.length?(d/b.length*100):0)+"%"}
+function openRating(di){
+ openDay=di;window.rate=null;
+ let r=document.getElementById("rating");r.innerHTML="";
+ for(let i=1;i<=10;i++){let b=document.createElement("button");b.textContent=i;
+  b.onclick=()=>{window.rate=i;document.querySelectorAll(".rating button").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");
+   document.getElementById("msg").textContent=i<=3?"خیلی آسان → جهش بزرگ به جلو":i<=6?"مناسب → پیشرفت تدریجی و ثابت":i<=8?"سخت ولی انجام‌شدنی → تثبیت، بدون افزایش":"خیلی سخت → کمی عقب‌نشینی برای حفظ فرم"};
+  r.appendChild(b)}
+ document.getElementById("msg").textContent="انتخاب کن.";
+ document.getElementById("modal").style.display="flex";
+}
+function saveRating(){
+ if(!window.rate||openDay===null)return;
+ let di=openDay, r=window.rate;
+ let step = r<=3?2 : r<=6?1 : r<=8?0 : -1;
+ let upgraded=[];
+ days[di][1].forEach((x,ei)=>{
+  let k=di+"-"+ei, assisted=x[4].indexOf("کمک")>-1, usesBand=(x[4].indexOf("کش")>-1)&&!assisted;
+  if(step>0){
+   adj[k]=(adj[k]||0)+step;
+   if(usesBand){
+    while(adj[k]>=4 && (bandLvl[k]||0) < bandLevels.length-1){
+     adj[k]-=4; bandLvl[k]=(bandLvl[k]||0)+1; upgraded.push(x[0]+" → کش "+bandLevels[bandLvl[k]]);
+    }
+    if((bandLvl[k]||0)>=bandLevels.length-1) adj[k]=Math.min(adj[k],3);
+   } else {
+    while(adj[k]>=6){
+     adj[k]-=6; setAdj[k]=(setAdj[k]||0)+1; upgraded.push(x[0]+" → یک ست اضافه شد");
+    }
+   }
+  } else if(step<0){
+   adj[k]=Math.max(-3,(adj[k]||0)+step);
+  }
+ });
+ localStorage.setItem("adj4",JSON.stringify(adj));
+ localStorage.setItem("bandLvl4",JSON.stringify(bandLvl));
+ localStorage.setItem("setAdj4",JSON.stringify(setAdj));
+ localStorage.setItem("lastRating4"+di,r);
+ saveWorkoutSnapshot("ثبت نمره سختی", {day:days[di][0], rating:r, upgraded:upgraded.slice()});
+ closeModal();render();
+ alert(upgraded.length? "سختی ثبت شد. این حرکت‌ها ارتقا پیدا کردن:\n"+upgraded.join("\n") : "سختی این روز ثبت شد و هدف‌های همون روز به‌صورت خودکار تنظیم شد.");
+}
+
+const HISTORY_KEY="workoutHistory4";
+function readHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]")}catch(e){return []}}
+function saveWorkoutSnapshot(reason,extra={}){
+ const history=readHistory(), now=new Date();
+ const completed=[...document.querySelectorAll("#days .ex")].filter(el=>el.querySelector('input[type="checkbox"]')?.checked).length;
+ const total=document.querySelectorAll("#days .ex").length;
+ const ratings=days.map((d,i)=>({day:d[0],rating:Number(localStorage.getItem("lastRating4"+i)||0)})).filter(x=>x.rating);
+ const currentScore=ratings.length?Math.round(ratings.reduce((a,x)=>a+x.rating,0)/ratings.length*10)/10:null;
+ const entry={id:Date.now(),timestamp:now.toISOString(),date:now.toLocaleDateString("fa-IR"),time:now.toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit"}),reason,completed,total,completion:total?Math.round(completed/total*100):0,averageRating:currentScore,...extra};
+ // Avoid flooding the history with identical repeated snapshots within 2 seconds.
+ const last=history[history.length-1];
+ if(last && Date.now()-last.id<2000 && last.reason===reason){history[history.length-1]=entry}else{history.push(entry)}
+ localStorage.setItem(HISTORY_KEY,JSON.stringify(history.slice(-500)));
+}
+function toggleMenu(){document.getElementById("menuPop").classList.toggle("show")}
+function hideMenu(){document.getElementById("menuPop").classList.remove("show")}
+function showHistory(){hideMenu();saveWorkoutSnapshot("مشاهده تاریخچه");document.getElementById("historyPanel").classList.add("show");document.getElementById("days").style.display="none";renderHistory();document.getElementById("historyPanel").scrollIntoView({behavior:"smooth",block:"start"})}
+function hideHistory(){document.getElementById("historyPanel").classList.remove("show");document.getElementById("days").style.display="block"}
+function renderHistory(){
+ const h=readHistory(), rated=h.filter(x=>x.averageRating!==null && x.averageRating!==undefined);
+ const latest=h[h.length-1], best=rated.length?Math.max(...rated.map(x=>x.averageRating)):null;
+ document.getElementById("historyStats").innerHTML=`<div><strong>${h.length}</strong>ثبت در تاریخچه</div><div><strong>${latest?latest.completion:0}%</strong>درصد انجام آخرین ثبت</div><div><strong>${best===null?"—":best}</strong>بالاترین میانگین نمره</div><div><strong>${latest?latest.date:"—"}</strong>آخرین ثبت</div>`;
+ drawTrend(rated);
+ const list=document.getElementById("historyList");
+ if(!h.length){list.innerHTML="<p>هنوز تاریخچه‌ای ثبت نشده است. تیک حرکت‌ها و نمره سختی را ثبت کن.</p>";return}
+ list.innerHTML=h.slice().reverse().map(x=>`<div class="history-item"><h4>${x.date||""} — ${x.time||""}</h4><div>${x.reason||"ثبت تمرین"}${x.day?" • "+x.day:""}</div><div>حرکت‌های انجام‌شده: ${x.completed||0} از ${x.total||0} (${x.completion||0}٪)</div><div>میانگین آخرین نمره‌های سختی: ${x.averageRating??"ثبت نشده"}${x.rating?" • نمره این جلسه: "+x.rating+"/10":""}</div>${x.upgraded?.length?`<div>ارتقاها: ${x.upgraded.join("، ")}</div>`:""}</div>`).join("");
+}
+function drawTrend(entries){
+ const c=document.getElementById("trendChart"),ctx=c.getContext("2d"),w=c.width,h=c.height;ctx.clearRect(0,0,w,h);
+ ctx.strokeStyle="#ddd";ctx.lineWidth=1;for(let i=0;i<5;i++){let y=20+i*(h-50)/4;ctx.beginPath();ctx.moveTo(45,y);ctx.lineTo(w-15,y);ctx.stroke()}
+ if(!entries.length){ctx.fillStyle="#666";ctx.font="20px Arial";ctx.textAlign="center";ctx.fillText("با ثبت نمره‌ها، روند نمایش داده می‌شود",w/2,h/2);return}
+ const points=entries.slice(-20),max=10,min=1;
+ ctx.strokeStyle="#3a7d44";ctx.lineWidth=4;ctx.beginPath();
+ points.forEach((p,i)=>{const x=45+(points.length===1?(w-60)/2:i*(w-60)/(points.length-1)),y=20+(max-p.averageRating)*(h-50)/(max-min);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.stroke();
+ points.forEach((p,i)=>{const x=45+(points.length===1?(w-60)/2:i*(w-60)/(points.length-1)),y=20+(max-p.averageRating)*(h-50)/(max-min);ctx.fillStyle="#222";ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill()});
+ ctx.fillStyle="#555";ctx.font="16px Arial";ctx.textAlign="right";ctx.fillText("۱۰",38,26);ctx.fillText("۱",38,h-25);
+}
+function exportHistory(){
+ hideMenu();const data={history:readHistory(),savedAt:new Date().toISOString(),exerciseSettings:{adj,bandLvl,setAdj}};
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="workout-history.json";a.click();URL.revokeObjectURL(url);
+}
+function clearHistory(){if(!confirm("فقط تاریخچه ثبت‌ها پاک شود؟ اطلاعات و تنظیمات تمرین فعلی باقی می‌ماند."))return;localStorage.removeItem(HISTORY_KEY);renderHistory()}
+function closeModal(){document.getElementById("modal").style.display="none";openDay=null}
+function resetAll(){if(!confirm("همه اطلاعات پاک شود؟"))return;localStorage.clear();adj={};bandLvl={};setAdj={};render()}
+render();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js").catch(()=>{}))}
+</script>
+<script>window.render = render; window.renderHistory = renderHistory;</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import {
+  getAuth, GoogleAuthProvider, signInWithRedirect, signOut,
+  onAuthStateChanged, getRedirectResult
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, setDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+/*
+  راه‌اندازی:
+  1) در Firebase Console یک Web App بساز.
+  2) firebaseConfig زیر را با تنظیمات واقعی پروژه جایگزین کن.
+  3) Google را در Authentication فعال کن.
+  4) Firestore Database بساز و قوانین فایل firestore.rules را قرار بده.
+  5) دامنه GitHub Pages را در Authentication > Settings > Authorized domains اضافه کن.
+*/
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+const isConfigured = Object.values(firebaseConfig).every(v =>
+  typeof v === "string" && v.length > 0 && !v.startsWith("YOUR_")
+);
+
+const statusEl = () => document.getElementById("cloudStatus");
+const userEl = () => document.getElementById("cloudUser");
+const signInBtn = () => document.getElementById("googleSignInBtn");
+const signOutBtn = () => document.getElementById("googleSignOutBtn");
+let auth = null, db = null, currentUser = null;
+let suppressSync = false, syncTimer = null, syncInProgress = false, syncAgain = false;
+
+function setStatus(message) {
+  if (statusEl()) statusEl().textContent = "وضعیت: " + message;
+}
+function appStorage() {
+  const result = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && /^(adj4|bandLvl4|setAdj4|ex4|lastRating4|workoutHistory4)/.test(key)) {
+      result[key] = localStorage.getItem(key);
+    }
+  }
+  return result;
+}
+function replaceAppStorage(data) {
+  suppressSync = true;
+  try {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && /^(adj4|bandLvl4|setAdj4|ex4|lastRating4|workoutHistory4)/.test(k)) keys.push(k);
+    }
+    keys.forEach(k => localStorage.removeItem(k));
+    Object.entries(data || {}).forEach(([k, v]) => {
+      if (/^(adj4|bandLvl4|setAdj4|ex4|lastRating4|workoutHistory4)/.test(k)) {
+        localStorage.setItem(k, String(v));
+      }
+    });
+  } finally {
+    suppressSync = false;
+  }
+}
+async function syncToCloud() {
+  if (!currentUser || !db || suppressSync) return;
+  if (syncInProgress) { syncAgain = true; return; }
+  syncInProgress = true;
+  try {
+    const ref = doc(db, "users", currentUser.uid);
+    await setDoc(ref, {
+      workoutAppData: appStorage(),
+      updatedAt: serverTimestamp(),
+      schemaVersion: 1
+    }, { merge: true });
+    setStatus("همگام‌سازی انجام شد؛ اطلاعات آنلاین ذخیره شد.");
+  } catch (err) {
+    console.error(err);
+    setStatus("خطا در ذخیره آنلاین: " + (err.code || err.message || "خطای نامشخص"));
+  } finally {
+    syncInProgress = false;
+    if (syncAgain) {
+      syncAgain = false;
+      syncToCloud();
+    }
+  }
+}
+function scheduleSync() {
+  if (!currentUser || suppressSync) return;
+  clearTimeout(syncTimer);
+  setStatus("تغییرات ثبت شد؛ در حال ذخیره آنلاین…");
+  syncTimer = setTimeout(syncToCloud, 900);
+}
+function hookLocalStorage() {
+  const originalSet = localStorage.setItem.bind(localStorage);
+  const originalRemove = localStorage.removeItem.bind(localStorage);
+  const originalClear = localStorage.clear.bind(localStorage);
+  localStorage.setItem = function(key, value) {
+    originalSet(key, value);
+    if (/^(adj4|bandLvl4|setAdj4|ex4|lastRating4|workoutHistory4)/.test(String(key))) scheduleSync();
+  };
+  localStorage.removeItem = function(key) {
+    originalRemove(key);
+    if (/^(adj4|bandLvl4|setAdj4|ex4|lastRating4|workoutHistory4)/.test(String(key))) scheduleSync();
+  };
+  localStorage.clear = function() {
+    originalClear();
+    scheduleSync();
+  };
+}
+window.cloudSignIn = async function() {
+  if (!isConfigured) {
+    setStatus("ابتدا firebaseConfig را در فایل HTML با تنظیمات پروژه خودت پر کن.");
+    return;
+  }
+  try {
+    const provider = new GoogleAuthProvider();
+    await signInWithRedirect(auth, provider);
+  } catch (err) {
+    console.error(err);
+    setStatus("ورود ناموفق بود: " + (err.code || err.message));
+  }
+};
+window.cloudSignOut = async function() {
+  try { await signOut(auth); }
+  catch (err) { setStatus("خطا هنگام خروج: " + (err.code || err.message)); }
+};
+window.addEventListener("storage", (event) => {
+  if (event.key === null || /^(adj4|bandLvl4|setAdj4|ex4|lastRating4|workoutHistory4)/.test(event.key)) {
+    if (currentUser) setStatus("در دستگاه دیگری تغییری رخ داده؛ برای دریافت آخرین اطلاعات صفحه را تازه‌سازی کن.");
+  }
+});
+
+if (!isConfigured) {
+  setStatus("هنوز پیکربندی نشده؛ مراحل راه‌اندازی را در فایل راهنما انجام بده.");
+  if (signInBtn()) signInBtn().disabled = true;
+  if (signOutBtn()) signOutBtn().style.display = "none";
+} else {
+  try {
+    const app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    hookLocalStorage();
+    getRedirectResult(auth).catch(err => {
+      console.error(err);
+      setStatus("ورود گوگل کامل نشد: " + (err.code || err.message));
+    });
+    onAuthStateChanged(auth, async user => {
+      currentUser = user;
+      if (!user) {
+        if (userEl()) userEl().textContent = "وارد نشده‌ای؛ اطلاعات فقط در همین مرورگر ذخیره می‌شوند.";
+        if (signInBtn()) signInBtn().style.display = "block";
+        if (signOutBtn()) signOutBtn().style.display = "none";
+        setStatus("برای همگام‌سازی بین دستگاه‌ها وارد حساب گوگل شو.");
+        return;
+      }
+      if (userEl()) userEl().textContent = "واردشده: " + (user.displayName || user.email || "حساب گوگل");
+      if (signInBtn()) signInBtn().style.display = "none";
+      if (signOutBtn()) signOutBtn().style.display = "block";
+      setStatus("در حال بررسی اطلاعات ابری…");
+      try {
+        const ref = doc(db, "users", user.uid);
+        const snap = await getDoc(ref);
+        const localData = appStorage();
+        if (snap.exists() && snap.data().workoutAppData) {
+          // Merge cloud first and local second so existing local values are not silently discarded.
+          const merged = { ...snap.data().workoutAppData, ...localData };
+          replaceAppStorage(merged);
+          await setDoc(ref, { workoutAppData: merged, updatedAt: serverTimestamp(), schemaVersion: 1 }, { merge: true });
+        } else {
+          await setDoc(ref, { workoutAppData: localData, updatedAt: serverTimestamp(), schemaVersion: 1 }, { merge: true });
+        }
+        setStatus("حساب متصل است؛ اطلاعات تمرین همگام شد.");
+        // Refresh visible history after cloud data has been applied.
+        if (typeof window.render === "function") window.render();
+        if (document.getElementById("historyPanel")?.classList.contains("show") && typeof window.renderHistory === "function") window.renderHistory();
+      } catch (err) {
+        console.error(err);
+        setStatus("خطا در دریافت/ذخیره اطلاعات: " + (err.code || err.message || "خطای نامشخص"));
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    setStatus("راه‌اندازی Firebase ناموفق بود: " + (err.message || "خطای نامشخص"));
+  }
+}
+</script>
+
+</body>
+</html>
